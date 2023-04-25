@@ -123,7 +123,6 @@ export class TokenExpiredError extends Error {
 }
 
 export class TokenInValidError extends Error {
-
   constructor() {
     super('TokenInValidError');
     Object.setPrototypeOf(this, TokenInValidError.prototype);

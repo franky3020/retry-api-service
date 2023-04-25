@@ -29,8 +29,6 @@ describe('PlatinumApiService', () => {
 
   it('when token is expired then token is invalid', () => {
 
-    let service: PlatinumApiService;
-    service = TestBed.inject(PlatinumApiService);
 
     spyOn(service, 'getToken').and.returnValue('have some thing');
     spyOn(service, 'getIsTokenExpired').and.returnValue(true);
@@ -50,9 +48,6 @@ describe('PlatinumApiService', () => {
 
   it('when platinum api throw invalid error', async () => {
 
-    let service: PlatinumApiService;
-    service = TestBed.inject(PlatinumApiService);
-
     let sendApiToPlatinumSpy = spyOn(service, 'sendApiToPlatinum').and.returnValue(
       new Promise((resolve)=>{ throw new TokenInValidError()})
     );
@@ -64,8 +59,6 @@ describe('PlatinumApiService', () => {
 
   it('when platinum api success', async () => {
 
-    let service: PlatinumApiService;
-    service = TestBed.inject(PlatinumApiService);
 
     let successRes = "GOOD you are best";
     let sendApiToPlatinumSpy = spyOn(service, 'sendApiToPlatinum').and.returnValue(
@@ -81,8 +74,6 @@ describe('PlatinumApiService', () => {
 
   it('when platinum token expired then sendApiToPlatinum will call two time', async () => {
 
-    let service: PlatinumApiService;
-    service = TestBed.inject(PlatinumApiService);
     service.setIsTokenExpired(true);
     let sendApiToPlatinumSpy = spyOn(service, 'sendApiToPlatinum').and.returnValue(
       new Promise((resolve)=>{throw new TokenExpiredError()})
@@ -95,17 +86,40 @@ describe('PlatinumApiService', () => {
 
   it('when platinum token invalid then sendApiToPlatinum will run resetTokenFromAPI()', async () => {
 
-    let service: PlatinumApiService;
-    service = TestBed.inject(PlatinumApiService);
-    service.setIsTokenExpired(true);
     spyOn(service, 'isTokenValid').and.returnValues(false, true);
     let resetTokenFromAPISpy = spyOn(service, 'resetTokenFromAPI');
 
     let res = await service.sendApiToPlatinum();
     expect(resetTokenFromAPISpy).toHaveBeenCalledTimes(1);
     expect(res).toBeInstanceOf(String);
+  });
+
+  it('when platinum token invalid after the resetTokenFromAPI() then throw TokenInValidError()', async () => {
+
+    spyOn(service, 'isTokenValid').and.returnValues(true, false); // 第二次呼叫時 為不合法
+
+    await expectAsync(service.sendApiToPlatinum()).toBeRejectedWith(new TokenInValidError());
+  });
+
+  it('resetTokenFromAPI()', async () => {
+    let mockToken = "mock_token";
+    spyOn(service, 'mockGetTokenFromFBO').and.returnValue(new Promise((resolve)=>{
+      resolve(mockToken);
+    }));
+
+    await service.resetTokenFromAPI();
+
+    expect(service.getToken()).toBe(mockToken);
+    expect(service.getIsTokenExpired()).toBe(true);
 
   });
+
+  it('mockGetTokenFromFBO()', async () => {
+
+    let token  = await service.mockGetTokenFromFBO();
+    expect(token).toBe('token_from_fbo');
+  });
+
 
 
 });
