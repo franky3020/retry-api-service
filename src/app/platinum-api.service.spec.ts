@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import {PlatinumApiService, TokenExpiredError, TokenInValidError} from './platinum-api.service';
+import {API_MAX_SEND_TIME, PlatinumApiService, TokenExpiredError, TokenInValidError} from './platinum-api.service';
 
 describe('PlatinumApiService', () => {
   let service: PlatinumApiService;
@@ -80,7 +80,7 @@ describe('PlatinumApiService', () => {
     );
 
     await expectAsync(service.sendApi()).toBeRejectedWith(new TokenExpiredError());
-    expect(sendApiToPlatinumSpy).toHaveBeenCalledTimes(2);
+    expect(sendApiToPlatinumSpy).toHaveBeenCalledTimes(API_MAX_SEND_TIME);
 
   });
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 
+export const API_MAX_SEND_TIME = 2;
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,6 @@ export class PlatinumApiService {
   private _isTokenExpired = true;
 
   constructor() { }
-
 
   /**
    * 處理 發送 API 時的流程:
@@ -23,14 +23,13 @@ export class PlatinumApiService {
    */
   async sendApi() {
 
-    const apiMaxSendTime = 2;
     let apiSendTime = 0;
 
     let res = '';
 
     let error: Error = new Error('unknown Error');
 
-    while (apiSendTime < apiMaxSendTime) {
+    while (apiSendTime < API_MAX_SEND_TIME) {
       try {
         res = await this.sendApiToPlatinum();
         return res;
@@ -50,7 +49,9 @@ export class PlatinumApiService {
   }
 
   /**
+   * 先檢查 token 是否有效, 才開始送出API
    * 可能拋出 [token 過期, token 無效, 無回應]的例外
+   * TODO: 無回應例外 須等未來有API後才實作
    */
   async sendApiToPlatinum(): Promise<string> {
 
