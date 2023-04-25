@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 
 export const API_MAX_SEND_TIME = 2;
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class PlatinumApiService {
 
   private _token = '';

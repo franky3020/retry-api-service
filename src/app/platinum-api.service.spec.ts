@@ -1,12 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 
 import {API_MAX_SEND_TIME, PlatinumApiService, TokenExpiredError, TokenInValidError} from './platinum-api.service';
+import {AppModule} from "./app.module";
 
 describe('PlatinumApiService', () => {
   let service: PlatinumApiService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [ PlatinumApiService ]
+    });
     service = TestBed.inject(PlatinumApiService);
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 100000;
   });
