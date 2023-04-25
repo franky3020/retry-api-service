@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import {PlatinumApiService, TokenInValidError} from './platinum-api.service';
+import {PlatinumApiService, TokenExpiredError, TokenInValidError} from './platinum-api.service';
 
 describe('PlatinumApiService', () => {
   let service: PlatinumApiService;
@@ -65,17 +65,18 @@ describe('PlatinumApiService', () => {
     expect(res).toBe("{mockJson:''}");
   });
 
-  it('when platinum token expired will retry send api one time', async () => {
+  it('when platinum token expired then sendApiToPlatinum will call two time', async () => {
 
-    // let service: PlatinumApiService;
-    // service = TestBed.inject(PlatinumApiService);
-    // service.isTokenExpired = true;
-    //
-    // // spy 它 sendApiToPlatinum
-    //
-    //
-    // let res = await service.sendApi();
-    // expect(res).toBe("{mockJson:''}");
+    let service: PlatinumApiService;
+    service = TestBed.inject(PlatinumApiService);
+    service.isTokenExpired = true;
+    let sendApiToPlatinumSpy = spyOn(service, 'sendApiToPlatinum').and.returnValue(
+      new Promise((resolve)=>{throw new TokenExpiredError()})
+    );
+
+    await expectAsync(service.sendApi()).toBeRejectedWith(new TokenExpiredError());
+    expect(sendApiToPlatinumSpy).toHaveBeenCalledTimes(2);
+
   });
 
 
