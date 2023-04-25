@@ -93,5 +93,19 @@ describe('PlatinumApiService', () => {
 
   });
 
+  it('when platinum token invalid then sendApiToPlatinum will run resetTokenFromAPI()', async () => {
+
+    let service: PlatinumApiService;
+    service = TestBed.inject(PlatinumApiService);
+    service.setIsTokenExpired(true);
+    spyOn(service, 'isTokenValid').and.returnValues(false, true);
+    let resetTokenFromAPISpy = spyOn(service, 'resetTokenFromAPI');
+
+    let res = await service.sendApiToPlatinum();
+    expect(resetTokenFromAPISpy).toHaveBeenCalledTimes(1);
+    expect(res).toBeInstanceOf(String);
+
+  });
+
 
 });
