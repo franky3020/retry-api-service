@@ -47,22 +47,31 @@ describe('PlatinumApiService', () => {
 
     let service: PlatinumApiService;
     service = TestBed.inject(PlatinumApiService);
-    service.isTokenValid = () => {
-      return false;
-    }
+
+    let sendApiToPlatinumSpy = spyOn(service, 'sendApiToPlatinum').and.returnValue(
+      new Promise((resolve)=>{ throw new TokenInValidError()})
+    );
+
     await expectAsync(service.sendApi()).toBeRejectedWith(new TokenInValidError());
+    expect(sendApiToPlatinumSpy).toHaveBeenCalledTimes(1);
+
   });
 
   it('when platinum api success', async () => {
 
     let service: PlatinumApiService;
     service = TestBed.inject(PlatinumApiService);
-    service.isTokenValid = () => {
-      return true;
-    }
+
+    let successRes = "GOOD you are best";
+    let sendApiToPlatinumSpy = spyOn(service, 'sendApiToPlatinum').and.returnValue(
+      new Promise((resolve)=>{ return resolve(successRes) })
+    );
 
     let res = await service.sendApi();
-    expect(res).toBe("{mockJson:''}");
+    expect(res).toBe(successRes);
+
+    expect(sendApiToPlatinumSpy).toHaveBeenCalledTimes(1);
+
   });
 
   it('when platinum token expired then sendApiToPlatinum will call two time', async () => {

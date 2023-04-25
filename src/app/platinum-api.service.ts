@@ -35,7 +35,7 @@ export class PlatinumApiService {
 
     let error: Error = new Error('unknown Error');
 
-    while(apiSendTime < apiMaxSendTime) {
+    while (apiSendTime < apiMaxSendTime) {
       try {
         res = await this.sendApiToPlatinum();
         return res;
