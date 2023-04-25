@@ -6,16 +6,11 @@ import { Injectable } from '@angular/core';
 })
 export class PlatinumApiService {
 
-
-  token = '';
-
-  isTokenExpired = true;
+  private _token = '';
+  private _isTokenExpired = true;
 
   constructor() { }
 
-  setToken(token: string) {
-    this.token = token;
-  }
 
   /**
    * 處理 發送 API 時的流程:
@@ -78,14 +73,14 @@ export class PlatinumApiService {
   async resetTokenFromAPI() {
     let token = await this.mockGetTokenFromFBO();
     this.setToken(token);
-    this.isTokenExpired = true;
+    this._isTokenExpired = true;
   }
 
   /**
    * if not expired or has token
    */
   isTokenValid() {
-    if (this.token === '' || this.isTokenExpired) {
+    if (this.getToken() === '' || this.getIsTokenExpired()) {
       return false;
     } else {
       return true;
@@ -98,6 +93,21 @@ export class PlatinumApiService {
       await sleep(1000);
       return resolve('token_from_fbo');
     });
+  }
+
+  getIsTokenExpired(): boolean {
+    return this._isTokenExpired;
+  }
+  setIsTokenExpired(isTokenExpired: boolean) {
+    this._isTokenExpired = isTokenExpired;
+  }
+
+  getToken(): string {
+    return this._token;
+  }
+
+  setToken(token: string) {
+    this._token = token;
   }
 
 }

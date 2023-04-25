@@ -15,29 +15,34 @@ describe('PlatinumApiService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('when token empty then token is invalid', () => {
-    service.setToken('');
+  it('when token expired then token is invalid', () => {
+    spyOn(service, 'getIsTokenExpired').and.returnValue(true);
     let isTokenValid= service.isTokenValid();
     expect(isTokenValid).toBe(false);
   });
 
   it('when token empty then token is invalid', () => {
-    service.setToken('');
+    spyOn(service, 'getToken').and.returnValue('');
     let isTokenValid= service.isTokenValid();
     expect(isTokenValid).toBe(false);
   });
 
   it('when token is expired then token is invalid', () => {
-    service.setToken('sdfasd');
-    service.isTokenExpired = true;
+
+    let service: PlatinumApiService;
+    service = TestBed.inject(PlatinumApiService);
+
+    spyOn(service, 'getToken').and.returnValue('have some thing');
+    spyOn(service, 'getIsTokenExpired').and.returnValue(true);
 
     let isTokenValid= service.isTokenValid();
     expect(isTokenValid).toBe(false);
   });
 
   it('when token is not expired and has value then token is valid', () => {
-    service.setToken('sdfasd');
-    service.isTokenExpired = false;
+
+    spyOn(service, 'getToken').and.returnValue('have some thing');
+    spyOn(service, 'getIsTokenExpired').and.returnValue(false);
 
     let isTokenValid= service.isTokenValid();
     expect(isTokenValid).toBe(true);
@@ -78,7 +83,7 @@ describe('PlatinumApiService', () => {
 
     let service: PlatinumApiService;
     service = TestBed.inject(PlatinumApiService);
-    service.isTokenExpired = true;
+    service.setIsTokenExpired(true);
     let sendApiToPlatinumSpy = spyOn(service, 'sendApiToPlatinum').and.returnValue(
       new Promise((resolve)=>{throw new TokenExpiredError()})
     );
